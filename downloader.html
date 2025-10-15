@@ -4,31 +4,147 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YouTube Downloader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@700&display=swap');
+/* Base reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
     background: #000;
     color: #fff;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     min-height: 100vh;
     padding: 20px;
+    overflow-x: hidden;
 }
-.container { max-width: 500px; text-align: center; }
-h1 { font-family: 'Instrument Serif', serif; font-size: 4.5rem; font-weight: 400; margin-bottom: 1.5rem; letter-spacing: 0.01em; line-height: 1; }
-p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; line-height: 1.5; letter-spacing: -0.01em; }
+
+/* =========================
+   Loader (exact from Jack)
+   ========================= */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+#loader.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.plane-loader {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.plane-svg {
+    width: 100%;
+    height: 100%;
+    animation: fly 2s ease-in-out infinite;
+}
+
+@keyframes fly {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+.loading-text {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #666;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.progress-bar {
+    width: 200px;
+    height: 2px;
+    background: #222;
+    margin-top: 20px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #fff;
+    width: 0%;
+    animation: load 2s ease-out forwards;
+}
+
+@keyframes load {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* =========================
+   Main content (hidden initially)
+   ========================= */
+#main-content {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+#main-content.show {
+    opacity: 1;
+}
+
+/* Page layout (kept original look) */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 40px);
+}
+
+h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 4.5rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+p {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2.5rem;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+}
 .requirement {
     font-size: 0.9rem;
     font-weight: 600;
     color: #888;
     margin-bottom: 2rem;
     padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+    text-align: left;
 }
 .requirement a { color: #fff; text-decoration: underline; }
 .download-btn {
@@ -42,17 +158,18 @@ p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; lin
     border-radius: 50px;
     transition: all 0.3s ease;
     border: 2px solid #fff;
+    margin-top: 8px;
 }
 .download-btn:hover {
     background: #000;
     color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(255,255,255,0.2);
 }
 .download-btn:active { transform: translateY(0); }
 
 /* TOS / Disclosure */
-.tos-container { margin-top: 3rem; }
+.tos-container { margin-top: 3rem; width: 100%; }
 .tos-toggle {
     background: none;
     border: none;
@@ -63,6 +180,8 @@ p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; lin
     padding: 10px 20px;
     transition: color 0.3s ease;
     font-family: 'Inter', sans-serif;
+    text-align: left;
+    width: 100%;
 }
 .tos-toggle:hover { color: #999; }
 .tos-toggle::after {
@@ -81,7 +200,7 @@ p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; lin
     font-size: 0.8rem;
     line-height: 1.8;
     text-align: left;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255,255,255,0.03);
     border-radius: 8px;
     padding: 0 20px;
 }
@@ -95,44 +214,76 @@ p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; lin
 .tos-content h3:first-child { margin-top: 0; }
 .tos-content p { color: #666; font-size: 0.8rem; font-weight: 400; margin-bottom: 1rem; line-height: 1.8; }
 .tos-content strong { color: #888; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    h1 { font-size: 3rem; }
+    .progress-bar { width: 160px; }
+    .plane-loader { width: 90px; height: 90px; margin-bottom: 20px; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-    <h1>YouTube Downloader</h1>
-    <p>Download videos and audio from YouTube with ease. Simple, fast, and reliable.</p>
-    <div class="requirement">
-        ⚠️ <strong>Requirement:</strong> You must have <a href="https://ffmpeg.org/download.html" target="_blank">FFmpeg</a> installed for full functionality.
-    </div>
-    <a href="https://drive.google.com/uc?export=download&id=1kEfO2RGFFUo514maQS6500eY5L-_wAbu" class="download-btn" download>Download</a>
-
-    <div class="tos-container">
-        <button class="tos-toggle">Terms of Service & License</button>
-        <div class="tos-content">
-            <h3>License & Usage</h3>
-            <p><strong>This software is proprietary.</strong> You are only allowed to download it from the official link above. Do not remix, redistribute, or share in any form.</p>
-            <p>Use of this software indicates acceptance of the following conditions:</p>
-            <ul>
-                <li>Download only from the official website.</li>
-                <li>Redistribution or resale is strictly prohibited.</li>
-                <li>FFmpeg must be installed and properly configured.</li>
-                <li>We are not responsible for any misuse of the software or content downloaded using it.</li>
-            </ul>
-            <h3>Disclaimer</h3>
-            <p>This tool is provided "as is" without warranties of any kind. The developers are not responsible for any damages, data loss, or legal issues resulting from its use.</p>
+    <!-- Loading Screen (exact same as your Jack site) -->
+    <div id="loader">
+        <div class="plane-loader">
+            <svg class="plane-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 20L60 45H75L50 65L25 45H40L50 20Z" fill="white"/>
+                <circle cx="50" cy="45" r="3" fill="white"/>
+            </svg>
+        </div>
+        <div class="loading-text">Loading</div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
         </div>
     </div>
-</div>
+
+    <!-- Main Content (wrap your original content here) -->
+    <div id="main-content">
+        <div class="container">
+            <h1>YouTube Downloader</h1>
+            <p>Download videos and audio from YouTube with ease. Simple, fast, and reliable.</p>
+            <div class="requirement">
+                ⚠️ <strong>Requirement:</strong> You must have <a href="https://ffmpeg.org/download.html" target="_blank">FFmpeg</a> installed for full functionality.
+            </div>
+            <a href="https://drive.google.com/uc?export=download&id=1kEfO2RGFFUo514maQS6500eY5L-_wAbu" class="download-btn" download>Download</a>
+
+            <div class="tos-container">
+                <button class="tos-toggle">Terms of Service & License</button>
+                <div class="tos-content">
+                    <h3>License & Usage</h3>
+                    <p><strong>This software is proprietary.</strong> You are only allowed to download it from the official link above. Do not remix, redistribute, or share in any form.</p>
+                    <p>Use of this software indicates acceptance of the following conditions:</p>
+                    <ul>
+                        <li>Download only from the official website.</li>
+                        <li>Redistribution or resale is strictly prohibited.</li>
+                        <li>FFmpeg must be installed and properly configured.</li>
+                        <li>We are not responsible for any misuse of the software or content downloaded using it.</li>
+                    </ul>
+                    <h3>Disclaimer</h3>
+                    <p>This tool is provided "as is" without warranties of any kind. The developers are not responsible for any damages, data loss, or legal issues resulting from its use.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
-const toggleBtn = document.querySelector('.tos-toggle');
-const tosContent = document.querySelector('.tos-content');
+    // Use the exact same loader behavior and timing (2.5s) as your Jack site
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('hide');
+            document.getElementById('main-content').classList.add('show');
+        }, 2500);
+    });
 
-toggleBtn.addEventListener('click', () => {
-    toggleBtn.classList.toggle('active');
-    tosContent.classList.toggle('active');
-});
+    // TOS toggle
+    const toggleBtn = document.querySelector('.tos-toggle');
+    const tosContent = document.querySelector('.tos-content');
+
+    toggleBtn.addEventListener('click', () => {
+        toggleBtn.classList.toggle('active');
+        tosContent.classList.toggle('active');
+    });
 </script>
 </body>
 </html>
-
