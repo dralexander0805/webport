@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jack Sampson Consulting Tip Screen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-type="module" data-presets="react,typescript">
+const { useState } = React;
+
+function TipPOSScreen() {
+  const clientName = "Ben Hoffman";
+  const companyName = "Jack Sampson Consulting LLC";
+
+  const presets = [25, 50, 100];
+  const [selected, setSelected] = useState(presets[1]);
+  const [custom, setCustom] = useState("");
+  const [showCustom, setShowCustom] = useState(false);
+  const [screen, setScreen] = useState("choose");
+
+  const displayAmount = () => custom ? Number(custom) : selected;
+
+  const handleConfirm = () => setScreen("confirmScreen");
+  const handleCustomNext = () => {
+    if (custom && Number(custom) > 0) {
+      setSelected(Number(custom));
+      setCustom("");
+      setShowCustom(false);
+    }
+  };
+
+  const reset = () => {
+    setSelected(presets[1]);
+    setCustom("");
+    setShowCustom(false);
+    setScreen("choose");
+  };
+
+  if (screen === "confirmScreen") {
+    return (
+      <ConfirmScreen
+        amount={displayAmount()}
+        clientName={clientName}
+        companyName={companyName}
+        onBack={() => setScreen("choose")}
+        onFinalConfirm={() => setScreen("done")}
+      />
+    );
+  }
+
+  if (screen === "done") {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white p-6 font-sans text-black">
+        <h1 className="text-3xl font-bold mb-4">Thank you!</h1>
+        <p className="text-lg">A tip of <strong>{displayAmount()} Blowies</strong> has been sent from <strong>{clientName}</strong> to <strong>{companyName}</strong>.</p>
+        <div className="mt-6">
+          <button onClick={reset} className="px-4 py-2 bg-gray-300 rounded">Return</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-white p-8 font-sans text-black">
+      <h1 className="text-3xl font-bold mb-2">{companyName}</h1>
+      <p className="mb-6 text-gray-700 text-lg">Tip from <strong>{clientName}</strong> to <strong>{companyName}</strong></p>
+
+      <div className="flex gap-4 mb-4 w-full max-w-2xl">
+        {presets.map(p => (
+          <button
+            key={p}
+            onClick={() => { setSelected(p); setCustom(""); setShowCustom(false); }}
+            className={`flex-1 py-4 rounded text-xl font-bold border ${selected === p && !custom ? "bg-gray-300" : "bg-white"}`}
+          >{p} Blowies</button>
+        ))}
+      </div>
+
+      <div className="flex gap-4 mb-4 w-full max-w-2xl">
+        <button onClick={handleConfirm} className="flex-1 py-4 bg-gray-900 text-white rounded font-bold text-xl">Confirm</button>
+        <button onClick={() => setShowCustom(s => !s)} className="flex-1 py-4 bg-gray-300 rounded font-medium text-xl">Custom</button>
+      </div>
+
+      {showCustom && (
+        <div className="flex gap-3 mb-4 w-full max-w-2xl">
+          <input
+            type="number"
+            placeholder="Enter custom amount"
+            value={custom}
+            onChange={e => setCustom(e.target.value.replace(/^0+(?=\\d)/, ""))}
+            className="flex-1 px-3 py-3 border rounded text-lg"
+          />
+          <button onClick={handleCustomNext} className="px-4 py-3 bg-gray-300 rounded font-medium text-lg">Next</button>
+        </div>
+      )}
+
+      <div className="mt-4 text-sm text-gray-600">Selected: <strong>{displayAmount()} blowies</strong></div>
+      <div className="mt-8">
+        <button onClick={reset} className="text-sm text-blue-600 underline">Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmScreen({ amount, clientName, companyName, onBack, onFinalConfirm }) {
+  const fakeAds = Array.from({ length: 50 }).map((_, i) => ({
+    id: i,
+    title: [`FREE TRIP!`, `BUY NOW`, `YOU WON!`, `SECRET HACK`, `UNBELIEVABLE`, `CLICK HERE`][Math.floor(Math.random() * 6)],
+    subtitle: [`LIMITED`, `SPONSORED`, `AD`, `OFFER`][Math.floor(Math.random() * 4)],
+    img: `https://picsum.photos/seed/${Math.floor(Math.random()*1000)}/` + (100 + Math.floor(Math.random() * 100)) + '/' + (80 + Math.floor(Math.random() * 80)),
+    color: `hsl(${Math.floor(Math.random() * 360)}, ${50 + Math.floor(Math.random()*50)}%, ${40 + Math.floor(Math.random()*20)}%)`,
+    rotation: Math.floor(Math.random() * 30 - 15),
+    fontSize: 10 + Math.floor(Math.random() * 10)
+  }));
+
+  // Create a "fake" ad button for final confirm
+  const confirmAd = {
+    title: "CONFIRM TIP",
+    subtitle: "CLICK HERE",
+    img: `https://picsum.photos/seed/confirm/150/100`,
+    color: "#00ff99",
+    rotation: Math.floor(Math.random() * 10 - 5),
+    fontSize: 12
+  };
+
+  return (
+    <div className="min-h-screen w-full flex flex-col items-start justify-start bg-white p-4 relative font-sans text-black">
+      <div className="w-full flex justify-between items-center mb-4 z-20 relative">
+        <div>
+          <h2 className="text-2xl font-bold">Confirm your tip</h2>
+          <div className="text-sm text-gray-700">{clientName} → {companyName} • {amount} blowies</div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={onBack} className="px-3 py-2 border rounded bg-gray-100 z-30 relative">Back</button>
+        </div>
+      </div>
+
+      {/* Fake ads */}
+      {fakeAds.map(ad => (
+        <a key={ad.id} href="https://www.monkeyporn.com" target="_blank" rel="noopener noreferrer" style={{
+          position: 'absolute',
+          top: Math.random() * 90 + '%',
+          left: Math.random() * 90 + '%',
+          width: 80 + Math.random() * 100,
+          height: 60 + Math.random() * 100,
+          backgroundColor: ad.color,
+          border: '2px solid #000',
+          borderRadius: 8,
+          padding: 4,
+          color: '#fff',
+          fontSize: ad.fontSize + 'px',
+          zIndex: 1 + Math.floor(Math.random() * 5),
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          transform: `rotate(${ad.rotation}deg)`,
+          textDecoration: 'none'
+        }}>
+          <div>{ad.title}</div>
+          <div>{ad.subtitle}</div>
+          <img src={ad.img} alt="ad" style={{ width: '100%', height: 'auto', borderRadius: 4 }} />
+        </a>
+      ))}
+
+      {/* Final confirm disguised as an ad */}
+      <a href="#" onClick={(e)=>{e.preventDefault(); onFinalConfirm();}} style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: `translate(-50%, -50%) rotate(${confirmAd.rotation}deg)`,
+        width: 120,
+        height: 80,
+        backgroundColor: confirmAd.color,
+        border: '2px solid #000',
+        borderRadius: 8,
+        padding: 4,
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: confirmAd.fontSize + 'px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        textAlign: 'center',
+        zIndex: 50,
+        cursor: 'pointer',
+        textDecoration: 'none'
+      }}>
+        <div>{confirmAd.title}</div>
+        <div>{confirmAd.subtitle}</div>
+        <img src={confirmAd.img} alt="confirm" style={{ width: '100%', height: 'auto', borderRadius: 4 }} />
+      </a>
+
+      <div className="mt-4 w-full text-sm text-gray-600 z-30 relative">Do NOT click on the ads — find the greenish ad-looking button in the center to confirm your tip.</div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<TipPOSScreen />);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Downloader</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #000;
+    color: #fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+.container { max-width: 500px; text-align: center; }
+h1 { font-family: 'Instrument Serif', serif; font-size: 4.5rem; font-weight: 400; margin-bottom: 1.5rem; letter-spacing: 0.01em; line-height: 1; }
+p { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2.5rem; line-height: 1.5; letter-spacing: -0.01em; }
+.requirement {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 2rem;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.requirement a { color: #fff; text-decoration: underline; }
+.download-btn {
+    display: inline-block;
+    background: #fff;
+    color: #000;
+    padding: 16px 48px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+}
+.download-btn:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+.download-btn:active { transform: translateY(0); }
+
+/* TOS / Disclosure */
+.tos-container { margin-top: 3rem; }
+.tos-toggle {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: color 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+.tos-toggle:hover { color: #999; }
+.tos-toggle::after {
+    content: ' ▼';
+    font-size: 0.7rem;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+.tos-toggle.active::after { transform: rotate(180deg); }
+.tos-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease, padding 0.4s ease;
+    opacity: 0;
+    color: #666;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 0 20px;
+}
+.tos-content.active {
+    max-height: 1000px;
+    opacity: 1;
+    margin-top: 1rem;
+    padding: 20px;
+}
+.tos-content h3 { color: #999; font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+.tos-content h3:first-child { margin-top: 0; }
+.tos-content p { color: #666; font-size: 0.8rem; font-weight: 400; margin-bottom: 1rem; line-height: 1.8; }
+.tos-content strong { color: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>YouTube Downloader</h1>
+    <p>Download videos and audio from YouTube with ease. Simple, fast, and reliable.</p>
+    <div class="requirement">
+        ⚠️ <strong>Requirement:</strong> You must have <a href="https://ffmpeg.org/download.html" target="_blank">FFmpeg</a> installed for full functionality.
+    </div>
+    <a href="YouTube-to-MP3.exe" class="download-btn" download>Download</a>
+
+    <div class="tos-container">
+        <button class="tos-toggle">Terms of Service & License</button>
+        <div class="tos-content">
+            <h3>License & Usage</h3>
+            <p><strong>This software is proprietary.</strong> You are only allowed to download it from the official link above. Do not remix, redistribute, or share in any form.</p>
+            <p>Use of this software indicates acceptance of the following conditions:</p>
+            <ul>
+                <li>Download only from the official website.</li>
+                <li>Redistribution or resale is strictly prohibited.</li>
+                <li>FFmpeg must be installed and properly configured.</li>
+                <li>We are not responsible for any misuse of the software or content downloaded using it.</li>
+            </ul>
+            <h3>Disclaimer</h3>
+            <p>This tool is provided "as is" without warranties of any kind. The developers are not responsible for any damages, data loss, or legal issues resulting from its use.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const toggleBtn = document.querySelector('.tos-toggle');
+const tosContent = document.querySelector('.tos-content');
+
+toggleBtn.addEventListener('click', () => {
+    toggleBtn.classList.toggle('active');
+    tosContent.classList.toggle('active');
+});
+</script>
+</body>
+</html>
