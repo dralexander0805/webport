@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎲 Card Spinner - Synced!</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            color: #ffd700;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 4rem;
+            margin: 40px 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: titlePulse 2s infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .card-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card-display {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-display.spinning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: spin-bg 0.5s infinite;
+            transform: scale(1.05);
+        }
+
+        .card-display.celebrating {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            transform: scale(1.1);
+            animation: celebrate 0.5s ease;
+        }
+
+        @keyframes spin-bg {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1.1) rotate(0deg); }
+            25% { transform: scale(1.15) rotate(-5deg); }
+            75% { transform: scale(1.15) rotate(5deg); }
+        }
+
+        .card-text {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .card-text.blur {
+            filter: blur(5px);
+        }
+
+        .drumroll-indicator {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .drumroll-indicator.active {
+            display: block;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .drumroll-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffd700;
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 25px 60px;
+            font-size: 2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover:not(:disabled) {
+            transform: scale(1.1) rotate(3deg);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        button:disabled {
+            background: #888;
+            cursor: not-allowed;
+            transform: scale(0.95);
+        }
+
+        .info {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .lightning {
+            display: inline-block;
+            animation: flash 0.5s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .card-text {
+                font-size: 1.8rem;
+            }
+            button {
+                padding: 20px 40px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1>🎲 CARD SPINNER 🎲</h1>
+        
+        <div class="card-container">
+            <div class="card-display" id="cardDisplay">
+                <p class="card-text" id="cardText">Click the button to spin! 🎰</p>
+            </div>
+            
+            <div class="drumroll-indicator" id="drumroll">
+                <div class="drumroll-text">
+                    <span class="lightning">⚡</span>
+                    DRUMROLL...
+                    <span class="lightning">⚡</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="spinButton" onclick="spinCard()">
+                🎰 SPIN THE WHEEL 🎰
+            </button>
+        </div>
+
+        <div class="info">
+            <p>⚡ Synced across all devices! Everyone sees the same result! ⚡</p>
+            <p style="margin-top: 10px;">🔞 18+ CONTENT WARNING 🔞</p>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://qumvlxvsoxvnylnydlez.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1bXZseHZzb3h2bnlsbnlkbGV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NDQ5MDIsImV4cCI6MjA3ODIyMDkwMn0.yQWmUv38d6kJWlx5hoZXc-8jVLWflQHoGFio4y52Bew';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const cards = [
+            "A threesome gone horribly wrong",
+            "Accidentally sexting your boss",
+            "Aggressive motorboating",
+            "An orgy for the elderly",
+            "Autocorrect ruining a sexy text",
+            "Ball gags and duct tape",
+            "Being caught masturbating by your roommate",
+            "Being drunk and horny",
+            "Binge drinking and bad decisions",
+            "Daddy issues",
+            "Deep throating a hot dog",
+            "Erectile dysfunction",
+            "Getting absolutely railed",
+            "Getting freaky in the Arby's bathroom",
+            "Grandma discovering your browser history",
+            "Hooking up with your ex's sibling",
+            "Inappropriate boners",
+            "Morning wood at a sleepover",
+            "Nipple clamps and whipped cream",
+            "Premature ejaculation",
+            "Public indecency charges",
+            "Really aggressive dirty talk",
+            "Revenge porn",
+            "Road head gone wrong",
+            "Sending nudes to the wrong person",
+            "Sex toys stuck in unfortunate places",
+            "Sexual tension you could cut with a knife",
+            "Slide into the DMs aggressively",
+            "Surprise anal",
+            "The walk of shame",
+            "Tinder hookups with your cousin",
+            "Trying butt stuff for the first time",
+            "Unwanted dick pics",
+            "Violently making out",
+            "Waking up in someone else's bed",
+            "Your safe word not working",
+            "A colonoscopy gone sexual",
+            "A disappointing hand job",
+            "A disturbing amount of lube",
+            "A failed vasectomy",
+            "A furry convention",
+            "A glory hole at the truck stop",
+            "A highly questionable strip club",
+            "A lactation fetish",
+            "A prostate exam that got too real",
+            "A really awkward lap dance",
+            "A sex dungeon in the basement",
+            "A sexually transmitted disease",
+            "A strap-on bigger than your forearm",
+            "A suspicious rash down there",
+            "A very public erection",
+            "Aggressively grinding on strangers",
+            "An extremely loud orgasm",
+            "An unfortunate piercing infection",
+            "Anal beads at airport security",
+            "Asking if the carpet matches the drapes",
+            "Bathroom stall glory holes",
+            "Being a home wrecker",
+            "Being addicted to pornography",
+            "Being caught watching porn by your kids",
+            "Being way too into feet",
+            "Blue balls that require medical attention",
+            "Bondage that went too far",
+            "Booty calls at 3 AM",
+            "Breaking a bed during sex",
+            "Breaking someone's virginity",
+            "Calling out the wrong name during sex",
+            "Catfishing desperate people online",
+            "Cheating on your spouse",
+            "Choking hazards of a sexual nature",
+            "Cocaine and bad decisions",
+            "Crippling porn addiction",
+            "Crying during sex",
+            "Dealing with a micropenis",
+            "Discovering your partner's weird fetish",
+            "Drunk dialing your ex at 2 AM",
+            "Dry humping in public",
+            "Edging for way too long",
+            "Embarrassing genital piercings",
+            "Emotional affairs with coworkers",
+            "Extremely graphic sexting",
+            "Extreme BDSM",
+            "Failed attempts at dirty talk",
+            "Falling asleep during sex",
+            "Farting during oral sex",
+            "Female ejaculation",
+            "Fifty shades of messed up",
+            "Fisting that requires medical attention",
+            "Flashing truckers on the highway",
+            "Friends with benefits ruining the friendship",
+            "Full frontal nudity",
+            "Gay chicken that went too far",
+            "Getting arrested for indecent exposure",
+            "Getting busy in a Burger King bathroom",
+            "Getting dominated by someone half your size",
+            "Getting fingered under the table",
+            "Getting frisky at a funeral",
+            "Getting handsy during Thanksgiving dinner",
+            "Getting herpes from a toilet seat",
+            "Getting it on in the car",
+            "Getting pegged for the first time",
+            "Getting walked in on by children",
+            "Going commando and regretting it",
+            "Granny porn",
+            "Having a baby you definitely didn't plan for",
+            "Having the clap",
+            "Herpes simplex 10",
+            "Hooking up at a family reunion",
+            "Hooking up with your therapist",
+            "Hot steamy car sex",
+            "Incest porn addiction",
+            "Inappropriate office relationships",
+            "Incriminating photos from last night",
+            "Jerking off to your friend's Instagram",
+            "Lactose intolerance during rimming",
+            "Leaving a wet spot",
+            "Loose morals and cheap thrills",
+            "Losing your virginity in a Walmart parking lot",
+            "Making a sex tape",
+            "Making porn to pay rent",
+            "Masturbating to anime",
+            "Masturbating with household objects",
+            "Mile high club membership",
+            "Multiple orgasms",
+            "Naked and afraid",
+            "Nipple play gone wrong",
+            "Not pulling out in time",
+            "Nude beach awkwardness",
+            "One night stands you regret",
+            "Peeing during sex",
+            "Poorly timed erectile dysfunction",
+            "Popping a boner at the gym",
+            "Pregnancy scares",
+            "Queefing at the worst possible moment",
+            "Questionable consent",
+            "Raw dogging it",
+            "Really aggressive twerking",
+            "Really disappointing sex",
+            "Riding crops and leather",
+            "Role playing as your boss",
+            "Rough sex injuries",
+            "Screwing the pizza delivery guy",
+            "Secret sex tapes getting leaked",
+            "Sending a dick pic to the family group chat",
+            "Sex in a public place",
+            "Sex lasting exactly 30 seconds",
+            "Sex swings and broken ceilings",
+            "Sex toys your mom found",
+            "Sexual experimentation in college",
+            "Sexting during a funeral",
+            "Sexy pillow talk with your stepmom",
+            "Shower sex accidents",
+            "Skid marks",
+            "Sleeping with your best friend's partner",
+            "Snorting cocaine off a stripper",
+            "Soggy condoms",
+            "Spicy food before anal",
+            "Stealthing",
+            "STD test results",
+            "Sucking dick for drug money",
+            "Sugar daddy arrangements",
+            "Swinger parties with your neighbors",
+            "Taking viagra recreationally",
+            "Testicular torsion",
+            "That special sock under the bed",
+            "The aftermath of Taco Bell and anal",
+            "The casting couch",
+            "The cougar next door",
+            "The exact moment you knew you were gay",
+            "The family finding your sex toys",
+            "The nasty stuff you're into",
+            "The wet spot on the bed",
+            "Threesomes with strangers",
+            "Tinder dates that turn into orgies",
+            "Titty fucking",
+            "Too much teeth",
+            "Trying to be sexy but failing miserably",
+            "Unexpected pregnancy",
+            "Unholy amounts of body hair",
+            "Using food as lube",
+            "Vaginal discharge",
+            "Very public boners",
+            "Viagra and red bull",
+            "Vigorous masturbation",
+            "Waking up next to someone you don't recognize",
+            "Waxing accidents",
+            "Way too much anal bleaching",
+            "Wearing assless chaps",
+            "When the condom breaks",
+            "Whiskey dick",
+            "Your OnlyFans getting discovered by family",
+            "Your partner's questionable browser history",
+            "Your sex dungeon being discovered"
+        ];
+
+        let isSpinning = false;
+        let audioContext = null;
+
+        // Initialize
+        async function init() {
+            // Create animated stars
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '✨';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.fontSize = (20 + Math.random() * 20) + 'px';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+
+            // Load current card
+            await loadCurrentCard();
+
+            // Subscribe to realtime updates
+            supabase
+                .channel('card-changes')
+                .on('postgres_changes', 
+                    { event: 'UPDATE', schema: 'public', table: 'current_card' },
+                    (payload) => {
+                        if (!isSpinning) {
+                            updateDisplay(payload.new.card_text);
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        async function loadCurrentCard() {
+            const { data, error } = await supabase
+                .from('current_card')
+                .select('card_text')
+                .eq('id', 1)
+                .single();
+
+            if (data && data.card_text) {
+                document.getElementById('cardText').textContent = data.card_text;
+            }
+        }
+
+        function updateDisplay(cardText) {
+            document.getElementById('cardText').textContent = cardText;
+        }
+
+        function playDrumroll() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const ctx = audioContext;
+            const now = ctx.currentTime;
+            
+            for (let i = 0; i < 30; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.frequency.value = 80 + Math.random() * 40;
+                osc.type = 'triangle';
+                
+                const startTime = now + (i * 0.08);
+                gain.gain.setValueAtTime(0.15, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.08);
+                
+                osc.start(startTime);
+                osc.stop(startTime + 0.08);
+            }
+        }
+
+        function playCymbalCrash() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const ctx = audioContext;
+            const now = ctx.currentTime;
+            
+            const bufferSize = ctx.sampleRate * 2;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 3000;
+            
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            
+            noise.start(now);
+            noise.stop(now + 1.5);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0080', '#00ff80', '#0080ff', '#ff8000', '#ff0000', '#ffff00'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    confetti.style.animationDuration = (1 + Math.random() * 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 20);
+            }
+        }
+
+        async function spinCard() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const button = document.getElementById('spinButton');
+            const display = document.getElementById('cardDisplay');
+            const text = document.getElementById('cardText');
+            const drumroll = document.getElementById('drumroll');
+            
+            button.disabled = true;
+            button.textContent = '🎲 SPINNING... 🎲';
+            display.classList.add('spinning');
+            text.classList.add('blur');
+            drumroll.classList.add('active');
+            
+            playDrumroll();
+            
+            // Rapid card cycling
+            const cycleInterval = setInterval(() => {
+                const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                text.textContent = randomCard;
+            }, 100);
+
+            // Stop after 2.5 seconds
+            setTimeout(async () => {
+                clearInterval(cycleInterval);
+                
+                const finalCard = cards[Math.floor(Math.random() * cards.length)];
+                
+                // Update Supabase (syncs to all devices)
+                await supabase
+                    .from('current_card')
+                    .update({ 
+                        card_text: finalCard,
+                        timestamp: Date.now()
+                    })
+                    .eq('id', 1);
+                
+                text.textContent = finalCard;
+                playCymbalCrash();
+                
+                display.classList.remove('spinning');
+                display.classList.add('celebrating');
+                text.classList.remove('blur');
+                drumroll.classList.remove('active');
+                
+                createConfetti();
+                
+                setTimeout(() => {
+                    display.classList.remove('celebrating');
+                }, 4000);
+                
+                isSpinning = false;
+                button.disabled = false;
+                button.textContent = '🎰 SPIN THE WHEEL 🎰';
+            }, 2500);
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
