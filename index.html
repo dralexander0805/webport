@@ -103,8 +103,23 @@
         .text-content h2 { font-size: clamp(40px,6vw,80px); font-weight: 300; letter-spacing: -1px; margin-bottom: 30px; line-height:1.1; }
         .text-content p { font-size: 16px; line-height:1.8; color:#999; margin-bottom:20px; }
 
-        .image-placeholder { width: 100%; height: 400px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; }
-        .verse { font-style: italic; }
+        .image-placeholder {
+    width: 100%;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.image-placeholder img {
+    width: 100%;
+    height: auto;
+    max-width: 600px; /* optional, to prevent it from being too large on desktops */
+    border-radius: 10px;
+    object-fit: contain;
+}
 
         /* Skills Grid */
         .skills-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; background:#222; margin-top:60px; }
@@ -136,6 +151,9 @@
             nav { padding:0 20px; }
             .container { padding:0 20px; }
             .social-link { font-size:18px; }
+            .image-placeholder img {
+            max-width: 100%; 
+        }
         }
     </style>
 </head>
