@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JACK SAMPSON</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&amp;display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -105,7 +103,7 @@
         .text-content h2 { font-size: clamp(40px,6vw,80px); font-weight: 300; letter-spacing: -1px; margin-bottom: 30px; line-height:1.1; }
         .text-content p { font-size: 16px; line-height:1.8; color:#999; margin-bottom:20px; }
 
-        .image-placeholder { width: 100%; height: 500px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; }
+        .image-placeholder { width: 100%; height: 400px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; }
         .verse { font-style: italic; }
 
         /* Skills Grid */
@@ -143,11 +141,11 @@
 </head>
 <body>
     <!-- Loading Screen -->
-    <div id="loader">
+    <div id="loader" class="hide">
         <div class="plane-loader">
             <svg class="plane-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 20L60 45H75L50 65L25 45H40L50 20Z" fill="white"/>
-                <circle cx="50" cy="45" r="3" fill="white"/>
+                <path d="M50 20L60 45H75L50 65L25 45H40L50 20Z" fill="white"></path>
+                <circle cx="50" cy="45" r="3" fill="white"></circle>
             </svg>
         </div>
         <div class="loading-text">Loading</div>
@@ -157,14 +155,14 @@
     </div>
 
     <!-- Main Content -->
-    <div id="main-content">
+    <div id="main-content" class="show">
         <!-- Header -->
         <header>
             <nav>
                 <div class="logo">JS</div>
                 <ul class="nav-links">
                     <li><a href="#about">About</a></li>
-                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="/packages">PACKAGES</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -172,7 +170,7 @@
 
         <!-- Hero -->
         <section class="hero">
-            <div class="hero-content">
+            <div class="hero-content" style="transform: translateY(0px); opacity: 1;">
                 <h1>JACK<br>SAMPSON</h1>
                 <p>Student Pilot " Content Creator " Christian</p>
             </div>
@@ -182,14 +180,14 @@
         <!-- About -->
         <section id="about">
             <div class="container">
-                <div class="section-title">001  About</div>
+                <div class="section-title">001 - About</div>
                 <div class="content-grid">
                     <div class="text-content">
                         <h2>Custom Livery Designs</h2>
                         <p>A seasoned custom livery designer specializing in authentic, aircraft-specific textures for flight simulators. I transform period-correct markings, weathering, and insignia into vivid, high-resolution liveries that enhance realism without sacrificing performance. Each project blends historical research with digital artistry to deliver tailored, production-ready textures that meet exacting specs for both personal and commercial use.</p>
                         <p class="verse">And we know that in all things God works for the good of those who love him, who have been called according to his purpose.</p><strong> Romans 8:28</strong>
                     </div>
-                    <div class="image-placeholder"></div>
+                    <div class="image-placeholder"><img src="https://jacksampson.lol/image.png" alt="Italian Trulli"></div>
                 </div>
             </div>
         </section>
@@ -207,11 +205,11 @@
                     </div>
                     <div class="skill-item">
                         <h3>Design</h3>
-                        <p>User Experience & Interface</p>
+                        <p>User Experience &amp; Interface</p>
                     </div>
                     <div class="skill-item">
                         <h3>Aviation</h3>
-                        <p>Flight & Aerospace</p>
+                        <p>Flight &amp; Aerospace</p>
                     </div>
                     <div class="skill-item">
                         <h3>Innovation</h3>
@@ -222,7 +220,7 @@
                         <p>More than 50 thousand yearly impressions</p>
                     </div>
                     <div class="skill-item">
-                        <h3>Faith & Values</h3>
+                        <h3>Faith &amp; Values</h3>
                         <p>Guided by Christian principles</p>
                     </div>
                 </div>
@@ -252,7 +250,7 @@
         </section>
 
         <!-- Flag -->
-        <div class="flag-container" id="flag">
+        <div class="flag-container" id="flag" style="opacity: 1;">
             <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="American Flag">
         </div>
 
@@ -293,5 +291,6 @@
             if(flag.offsetTop < windowBottom - 100) { flag.style.opacity = 1; }
         });
     </script>
-</body>
-</html>
+
+
+</body></html>
