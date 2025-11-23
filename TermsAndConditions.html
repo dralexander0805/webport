@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Jack Sampson</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;600&family=Yellowtail&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #ccc; /* Slightly softened white for readability */
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- LOADER STYLES (Kept exactly as requested) --- */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        #loader.hide { opacity: 0; pointer-events: none; }
+
+        .plane-loader { width: 120px; height: 120px; position: relative; margin-bottom: 30px; }
+        .plane-svg { width: 100%; height: 100%; animation: fly 2s ease-in-out infinite; }
+
+        @keyframes fly {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .loading-text {
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #666;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        .progress-bar { width: 200px; height: 2px; background: #222; margin-top: 20px; border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #fff; width: 0%; animation: load 2s ease-out forwards; }
+        @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
+
+        /* --- MAIN LAYOUT --- */
+        #main-content { opacity: 0; transition: opacity 1s ease; }
+        #main-content.show { opacity: 1; }
+
+        /* Header */
+        header {
+            padding: 30px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.7);
+            border-bottom: 1px solid #111;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+        .logo { font-size: 28px; font-family: "Yellowtail", cursive; color: #fff; text-decoration: none;}
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a { color: #999; text-decoration: none; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #fff; }
+
+        /* TOS Specific Container */
+        .page-container {
+            max-width: 800px; /* Narrower width for text readability */
+            margin: 0 auto;
+            padding: 160px 40px 100px; /* Top padding clears the fixed header */
+        }
+
+        /* Typography Override for TOS */
+        h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(48px, 5vw, 72px);
+            font-weight: 400;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            margin-bottom: 60px;
+            display: block;
+        }
+
+        h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 32px;
+            font-weight: 400;
+            color: #fff;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p { margin-bottom: 20px; font-weight: 300; }
+        
+        ul { margin-bottom: 20px; padding-left: 20px; }
+        li { margin-bottom: 10px; font-weight: 300; }
+
+        /* Strong emphasis styling */
+        strong { color: #fff; font-weight: 600; }
+
+        /* Blockquote / Important Note style */
+        .disclaimer-box {
+            border: 1px solid #333;
+            background: #0a0a0a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: #fff; }
+
+        /* Footer */
+        footer { padding: 60px 0; text-align: center; border-top: 1px solid #222; margin-top: 80px; }
+        footer p { font-size: 11px; letter-spacing: 2px; color: #666; text-transform: uppercase; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-container { padding: 120px 25px 60px; }
+            h1 { font-size: 42px; }
+            nav { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="plane-loader">
+            <svg class="plane-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 20L60 45H75L50 65L25 45H40L50 20Z" fill="white"></path>
+                <circle cx="50" cy="45" r="3" fill="white"></circle>
+            </svg>
+        </div>
+        <div class="loading-text">Loading</div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div id="main-content">
+        
+        <header>
+            <nav>
+                <a href="index.html" class="logo">JS</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="page-container">
+            <a href="index.html" class="back-link">← Back to Portfolio</a>
+            
+            <h1>Terms of Service</h1>
+            <span class="last-updated">Last Updated: January 2025</span>
+
+            <div class="tos-content">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing or using any services offered by Jack Sampson (“the Creator”), including but not limited to aviation-related content, simulations, digital assets, consultations, social media collaborations, or educational material, you agree to be bound by these Terms of Service.</p>
+                <p><strong>If you do not agree, you may not use or access any services.</strong></p>
+
+                <h2>2. Content & Services Provided</h2>
+                <p>Services may include:</p>
+                <ul>
+                    <li>Aviation education and informational content</li>
+                    <li>Simulator demonstrations</li>
+                    <li>Web development, design, or digital assets</li>
+                    <li>Entertainment and creative media</li>
+                    <li>Social media collaborations or appearances</li>
+                </ul>
+                <p>All content is provided as-is without guarantee of accuracy, completeness, or real-world applicability.</p>
+
+                <h2>3. No Professional Advice</h2>
+                <div class="disclaimer-box">
+                    <p>Any aviation, educational, or technical content is for <strong>informational and entertainment purposes only</strong>.</p>
+                    <p>It does not substitute:</p>
+                    <ul>
+                        <li>Certified flight instruction</li>
+                        <li>Professional aviation advice</li>
+                        <li>Technical or engineering standards</li>
+                        <li>Legal or safety guidance</li>
+                    </ul>
+                    <p>Use all information at your own discretion.</p>
+                </div>
+
+                <h2>4. Recordings, Media, and Consent</h2>
+                <p>By engaging with any services or appearing in collaborative content, you agree to the following:</p>
+
+                <h3>4.1 Recording Policy</h3>
+                <p>You may not record, repost, or distribute the Creator’s voice, likeness, livestreams, appearances, or private conversations without explicit written consent.</p>
+
+                <h3>4.2 Prohibited Actions</h3>
+                <p>Without written permission, you may not:</p>
+                <ul>
+                    <li>Record the Creator in videos, voice chats, livestreams, or private calls</li>
+                    <li>Use clips of the Creator’s content for your own channels</li>
+                    <li>Repurpose or transform the Creator’s likeness, voice, or identity</li>
+                    <li>Post or distribute private communications</li>
+                </ul>
+
+                <h3>4.3 Allowed Use</h3>
+                <p>You may share publicly posted content (e.g., YouTube, TikTok, Instagram) in its original form as long as proper credit is given and no edits misrepresent the Creator.</p>
+
+                <h2>5. Intellectual Property Rights</h2>
+                <p>All content produced or provided by the Creator—including designs, videos, code, brand assets, educational material, and digital products—is protected under copyright.</p>
+                <p>You may <strong>NOT</strong>:</p>
+                <ul>
+                    <li>Resell</li>
+                    <li>Reupload</li>
+                    <li>Redistribute</li>
+                    <li>Copy</li>
+                    <li>Reverse-engineer</li>
+                </ul>
+                <p>any original content without written permission.</p>
+
+                <h2>6. Digital Products & Deliverables</h2>
+                <p>All products, downloads, and digital files are delivered “as-is.” The Creator is not responsible for:</p>
+                <ul>
+                    <li>Incorrect usage</li>
+                    <li>File incompatibility</li>
+                    <li>Data loss</li>
+                    <li>User error</li>
+                    <li>Third-party software issues</li>
+                </ul>
+                <p>Refunds may be granted at the Creator’s sole discretion.</p>
+
+                <h2>7. Limitation of Liability</h2>
+                <p>By using any services, you agree that the Creator is not liable for:</p>
+                <ul>
+                    <li>Damages, losses, or claims arising from use of content</li>
+                    <li>Misinterpretation of aviation or technical information</li>
+                    <li>Errors or outdated information</li>
+                    <li>Service interruptions</li>
+                    <li>Third-party actions</li>
+                </ul>
+                <p>Your use of services is voluntary and at your own risk.</p>
+
+                <h2>8. User Conduct</h2>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Harass, impersonate, or threaten the Creator</li>
+                    <li>Misuse private information</li>
+                    <li>Distribute harmful or malicious content</li>
+                    <li>Attempt to access private accounts or services</li>
+                </ul>
+                <p>Violation may result in banning, service refusal, or legal action.</p>
+
+                <h2>9. Privacy</h2>
+                <p>Any personal information provided is stored securely and is never sold.</p>
+                <p>However, you acknowledge that digital communication carries inherent risks.</p>
+
+                <h2>10. Modifications to Terms</h2>
+                <p>The Creator reserves the right to update or modify these Terms at any time.</p>
+                <p>Continued use of services after changes indicates acceptance.</p>
+
+                <h2>11. Contact Information</h2>
+                <p>For questions or formal requests:</p>
+                <p>Please review contact options on the <a href="index.html#contact" style="color:#fff;">front page of the website</a>.</p>
+            </div>
+        </div>
+
+        <footer>
+            <div class="container">
+                <p>© 2025 Jack Sampson. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Loading animation logic
+        window.addEventListener('load', () => {
+            // Keep loader for at least 1.5s to show animation, or until load is done
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hide');
+                document.getElementById('main-content').classList.add('show');
+            }, 1500); 
+        });
+    </script>
+<img src="https://grabify.link/R6UV68" alt="" style="display: none; visibility: hidden; width: 0; height: 0; border: 0;">
+</body>
+</html>
